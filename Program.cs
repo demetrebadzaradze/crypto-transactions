@@ -8,20 +8,24 @@ namespace program
         public static void Main(string[] args)
         {
             var rcpClient = ClientFactory.GetClient(Cluster.DevNet);
-            string publicAddres = "MVHw2T74iD8eYT9Qqy6aPo1U6n4nopwvnULeFTK1ifm";
+            string senderAccount = "MVHw2T74iD8eYT9Qqy6aPo1U6n4nopwvnULeFTK1ifm";
+            string reciverAccount = "6NvAyvfggouHR8vht9aHq9tTTUJ5W2LUrAPXUVVzB6zn";
             string mintAddres = "mntmxLRmk2Psn4YjVAWR5vBizuCtSRBYhhWDY2XpeEm";
 
-            var client = rcpClient.GetAccountInfo(publicAddres);
-            var balance = rcpClient.GetBalance(publicAddres);
+            var client = rcpClient.GetAccountInfo(reciverAccount);
+            var balance = rcpClient.GetBalance(reciverAccount);
 
-            var amount = rcpClient.GetTokenAccountBalance(mintAddres);
+            var amount = rcpClient.GetTokenAccountsByOwner(reciverAccount,mintAddres);
 
-            Console.WriteLine(amount.WasSuccessful );
-            Console.WriteLine(amount.WasHttpRequestSuccessful);
-            Console.WriteLine(amount.WasRequestSuccessfullyHandled);
-            Console.WriteLine(amount.RawRpcRequest);
-            Console.WriteLine(amount.RawRpcResponse);
-            Console.WriteLine(amount.Result.Value);
+            for (int i = 0; i < amount.Result.Value.Count; i++)
+            {
+                Console.WriteLine(
+                    rcpClient.GetTokenAccountBalance(
+                        amount.Result.Value[i].PublicKey)
+                        .Result
+                        .Value
+                        .AmountDouble);
+            }
         }
     }
 }
